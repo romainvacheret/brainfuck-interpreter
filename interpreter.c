@@ -21,8 +21,13 @@ void debug() {
 
 int* allocate_memory() { return (int*) calloc((memory_length += memory_extension), sizeof(int)); }
 void init() { memory = allocate_memory(); }
-void increase_memory() { int* temp = memcpy(allocate_memory(), memory, memory_length - memory_extension); memory = temp; }
 int is_valid_charact(const char charact) { return strchr("+-<>[].,", charact) != NULL; }
+void increase_memory() {
+	int* tmp = allocate_memory(), i = 0;
+	for(; i < memory_length - memory_extension; i++) tmp[i] = memory[i];
+	free(memory);
+	memory = tmp;
+}
 
 // operators
 void incremente() { memory[current_memory]++; }
@@ -35,6 +40,7 @@ void set_index() { last_bracket = current_command; }
 void goto_index() { if(!memory[current_memory]) last_bracket = -1; else current_command = last_bracket -1; }
 
 void execute(const char command) {
+	
 	switch(command) {
 		case '+':
 			incremente();
@@ -65,7 +71,7 @@ void process() { while(current_command != strlen(code_string)) execute(code_stri
 
 int main() {
 	init();
-	code_string = "+++++[>+<-]";
+	code_string = "+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+";
 	process();
 	debug();
 	return EXIT_SUCCESS;
@@ -74,7 +80,6 @@ int main() {
 /*
 TODO:
 	- Implement `,`
-	- Check memory increase
 	- Add logs in file ?
 	- Check characters' validity
 	- Add space to improve lisibility

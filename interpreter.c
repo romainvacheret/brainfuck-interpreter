@@ -21,7 +21,22 @@ void debug() {
 
 int* allocate_memory() { return (int*) calloc((memory_length += memory_extension), sizeof(int)); }
 void init() { memory = allocate_memory(); }
-int is_valid_charact(const char charact) { return strchr("+-<>[].,", charact) != NULL; }
+int is_valid_charact(const char charact) { return strchr("+-<>[]., \t\n", charact) != NULL; }
+int is_valid_string() {
+	int i = 0;
+	for(; i <strlen(code_string); i++) if(!is_valid_charact(code_string[i])) return 0;
+	return 1;
+}
+int are_brackets_valid() {
+	int opening = 0, closing = 0, i = 0;
+	for(; i < strlen(code_string); i++) {
+		char charact = code_string[i];
+		opening += charact == '[';
+		closing += charact == ']';
+	}
+	return opening == closing;
+}
+int is_valid_code() { return is_valid_string() && are_brackets_valid(); }
 void increase_memory() {
 	int* tmp = allocate_memory(), i = 0;
 	for(; i < memory_length - memory_extension; i++) tmp[i] = memory[i];
@@ -40,7 +55,6 @@ void set_index() { last_bracket = current_command; }
 void goto_index() { if(!memory[current_memory]) last_bracket = -1; else current_command = last_bracket -1; }
 
 void execute(const char command) {
-	
 	switch(command) {
 		case '+':
 			incremente();
@@ -64,6 +78,10 @@ void execute(const char command) {
 			break;
 		case ']':
 			goto_index();
+			break;
+		case ' ':
+		case '\t':
+		case '\n':;
 	}
 	current_command++;
 }
@@ -71,7 +89,8 @@ void process() { while(current_command != strlen(code_string)) execute(code_stri
 
 int main() {
 	init();
-	code_string = "+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+";
+	code_string = "+> +>+ >+> +>+>+>+>\n+>+>+>+ >+>+>+>+>+> 	+>+>+ >+>+>+>+";
+	if(!is_valid_code()) return EXIT_FAILURE;
 	process();
 	debug();
 	return EXIT_SUCCESS;
@@ -81,7 +100,6 @@ int main() {
 TODO:
 	- Implement `,`
 	- Add logs in file ?
-	- Check characters' validity
-	- Add space to improve lisibility
-	- Check opening braket exists when encounter closing one
+	- Read files
+	- Fix `[-]`
 */

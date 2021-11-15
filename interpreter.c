@@ -46,7 +46,7 @@ void increase_memory() {
 
 // operators
 void incremente() { memory[current_memory]++; }
-void decremente() { memory[current_memory]--; }
+void decremente() { memory[current_memory] = MAX(0, memory[current_memory] - 1); }
 void next() { if(++current_memory >= memory_length) increase_memory(); }
 void previous() { current_memory = MAX(0, current_memory - 1); }
 void print_mem() { printf("%c", memory[current_memory]); }
@@ -84,12 +84,15 @@ void execute(const char command) {
 		case '\n':;
 	}
 	current_command++;
+
+	printf("%d %d %d \n", current_command, current_memory, memory[current_memory]);
 }
 void process() { while(current_command != strlen(code_string)) execute(code_string[current_command]); }
 
 int main() {
 	init();
-	code_string = "+> +>+ >+> +>+>+>+>\n+>+>+>+ >+>+>+>+>+> 	+>+>+ >+>+>+>+";
+	code_string = "[-]";
+	// code_string = "+> +>+ >+> +>+>+>+>\n+>+>+>+ >+>+>+>+>+> 	+>+>+ >+>+>+>+";
 	if(!is_valid_code()) return EXIT_FAILURE;
 	process();
 	debug();
@@ -101,5 +104,4 @@ TODO:
 	- Implement `,`
 	- Add logs in file ?
 	- Read files
-	- Fix `[-]`
 */

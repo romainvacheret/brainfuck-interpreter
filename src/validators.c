@@ -1,28 +1,15 @@
 #include <string.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "validators.h"
 
 int is_valid_charact(const char charact) { 
-    return strchr("+-<>[]., \t\n", charact) != NULL;
+    return strchr("+-<>[].,", charact) != NULL;
 }
 
-int is_valid_string(char* code_string) {
-	int i = 0;
-
-	for(; i <strlen(code_string); i++) {
-        if(!is_valid_charact(code_string[i])) {
-            return 0;
-        }
-    }
-
-	return 1;
-}
-
-int is_valid_code(char* code_string) {
-    return is_valid_string(code_string) && are_brackets_valid(code_string);
-}
-
-int are_brackets_valid(char* code_string) {
+int are_brackets_valid(char code_string[]) {
 	int opening = 0, closing = 0, i = 0;
 
 	for(; i < strlen(code_string); i++) {
@@ -32,4 +19,21 @@ int are_brackets_valid(char* code_string) {
 	}
 
 	return opening == closing;
+}
+
+char* filter_input(char input_string[]) {
+    int size = strlen(input_string), i = 0, j = 0;
+    char* rtr = (char*) calloc(size, sizeof(char));
+
+    while(i < size) {
+        while(i + j < size - 1 && !is_valid_charact(input_string[i + j])) {
+            j++;
+        }
+
+        strncat(rtr, &input_string[i + j], 1);
+        i += j + 1;
+        j = 0;
+    }
+
+    return rtr;
 }

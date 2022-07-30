@@ -26,7 +26,6 @@ void free_memory_manager(MemoryManager* mm) {
 Interpreter* init_interpreter(char* code_string) {
     Interpreter* i = (Interpreter*) malloc(sizeof(Interpreter));
     i->mm = init_memory_manager();
-    i->code_string = "";
     i->last_bracket = -1;
     i->code_string = code_string;
     return i;
@@ -34,6 +33,7 @@ Interpreter* init_interpreter(char* code_string) {
 
 void free_interpreter(Interpreter* i) {
     free_memory_manager(i->mm);
+    free(i->code_string);
     free(i);
 }
 
@@ -74,14 +74,8 @@ void execute(Interpreter* i) {
             break;
         case ']':
             goto_index(i);
-            break;
-        case ' ':
-        case '\t':
-        case '\n':;
     }
     i->current_command++;
-
-    printf("%d %d %d \n", i->current_command, i->mm->current_memory, i->mm->memory[i->mm->current_memory]);
 }
 
 void process(Interpreter* i) {
